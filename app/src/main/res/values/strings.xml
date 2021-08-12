@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Lecturer Rating</string>
+    <string name="txtRegister">Register</string>
+    <string name="txtUsername">Username</string>
+    <string name="txtEmail">Email</string>
+    <string name="Password">Password</string>
+    <string name="ReRegister">Confirm Password</string>
+    <string name="HaveAccount">Already Have an Account?</string>
+    <string name="Login">Login</string>
+    <string name="ForgotPassword">Forgot Password?</string>
+    <string name="DontHaveAccount">Don't Have an Account?</string>
+    <string name="SignUP" >Sign Up</string>
+    <string name="Google">Google</string>
+    <string name="Facebook">Facebook</string>
+</resources>
