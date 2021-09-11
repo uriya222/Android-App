@@ -30,6 +30,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        getSupportActionBar().setTitle("Register Activity");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         initViews();
         eye_click();
         register_clicked();
@@ -91,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                     re_password.setError("The password is not match!");
                     errors++;
                 }
-                if(errors==0) addToAllProfiles();
+                if(errors==0) addToMyProfile();
             }
         });
     }
@@ -124,15 +127,18 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void addToAllProfiles() {
+    private void addToMyProfile() {
         PersonalProfile p = new PersonalProfile(username_s,email_s,password_s);
-        Utils base = Utils.getInstance();
-        base.addNewProfile(p);
+        Utils base = Utils.getInstance(this);
+        base.InitProfile(p);
         username.setText("");
         email.setText("");
         password.setText("");
         re_password.setText("");
         Toast.makeText(this, "Register Complete successfully!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(RegisterActivity.this,ProfileActivity.class);
+        intent.putExtra("source","RegisterActivity");
+        startActivity(intent);
     }
 
     private void initViews() {
