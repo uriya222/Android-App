@@ -4,17 +4,20 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityOptionsCompat;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +29,7 @@ import android.widget.Toast;
 import com.vansuita.pickimage.bean.PickResult;
 import com.vansuita.pickimage.bundle.PickSetup;
 import com.vansuita.pickimage.dialog.PickImageDialog;
+import com.vansuita.pickimage.enums.EPickType;
 import com.vansuita.pickimage.listeners.IPickCancel;
 import com.vansuita.pickimage.listeners.IPickResult;
 
@@ -35,12 +39,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class ProfileActivity extends AppCompatActivity implements IPickResult {
+public class ProfileActivity extends AppCompatActivity {
     private ImageView edit_icon, profile_picture;
     private PersonalProfile p;
     private String photo_path;
     private Utils base = Utils.getInstance(this);
-    private Button myRates, edit_button;
+    private Button myRates, edit_button, main_page;
     private TextView txt_edit;
 
 
@@ -81,49 +85,44 @@ public class ProfileActivity extends AppCompatActivity implements IPickResult {
         edit_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //a.launch("image/*");
+                //a.launch("image/*");  open gallery, need premonitions
                 // learn to use in here - https://github.com/jrvansuita/PickImage
-                PickImageDialog.build(new PickSetup()).show(ProfileActivity.this);
+                // setup for UI of the dialog
+                PickSetup setup = new PickSetup().setSystemDialog(true);
+                // the result of dialog
+                PickImageDialog.build(setup)
+                        .setOnPickResult(new IPickResult() {
+                            @Override
+                            public void onPickResult(PickResult r) {
+                                profile_picture.setImageURI(r.getUri());
+                                BitmapDrawable drawable = (BitmapDrawable) profile_picture.getDrawable();
+                                Bitmap bitmap = drawable.getBitmap();
+                                photo_path = saveToInternalStorage(bitmap);
+                                p.setPhoto_path(photo_path);
+                                base.UpdateProfile(p);
+                            }
+                        })
+                        .setOnPickCancel(new IPickCancel() {
+                            @Override
+                            public void onCancelClick() {
+                                //TODO: do what you have to if user clicked cancel
+                                Toast.makeText(ProfileActivity.this, "cancel clicked", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show(getSupportFragmentManager());
+            }
+        });
+
+        main_page.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProfileActivity.this,LecturerListActivity.class));
             }
         });
 
 
-        PickImageDialog.build(new PickSetup())
-                .setOnPickResult(new IPickResult() {
-                    @Override
-                    public void onPickResult(PickResult r) {
-                        //TODO: do what you have to...
-                    }
-                })
-                .setOnPickCancel(new IPickCancel() {
-                    @Override
-                    public void onCancelClick() {
-                        //TODO: do what you have to if user clicked cancel
-                    }
-                }).show(getSupportFragmentManager());
-    }
-
-    public void onPickResult(PickResult r) {
-        if (r.getError() == null) {
-            //If you want the Uri.
-            //Mandatory to refresh image from Uri.
-            //getImageView().setImageURI(null);
-
-            //Setting the real returned image.
-            //getImageView().setImageURI(r.getUri());
-
-            //If you want the Bitmap.
-            getImageView().setImageBitmap(r.getBitmap());
-
-            //Image path
-            //r.getPath();
-        } else {
-            //Handle possible errors
-            //TODO: do what you have to do with r.getError();
-            Toast.makeText(ProfileActivity.this, r.getError().getMessage(), Toast.LENGTH_LONG).show();
-        }
 
     }
+
 
     private String saveToInternalStorage(Bitmap bitmapImage){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
@@ -165,12 +164,38 @@ public class ProfileActivity extends AppCompatActivity implements IPickResult {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+//set title
+                .setTitle("Are you sure to Exit?")
+//set positive button
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what would happen when positive button is clicked
+                        finishAffinity();
+                        System.exit(0);
+                    }
+                })
+//set negative button
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //set what should happen when negative button is clicked
+                        Toast.makeText(getApplicationContext(),"Nothing Happened",Toast.LENGTH_LONG).show();
+                    }
+                })
+                .show();
+    }
+
     private void initViews() {
         edit_icon = findViewById(R.id.edit_icon_profile);
         profile_picture = findViewById(R.id.profile_picture);
         myRates = findViewById(R.id.my_rates_profile);
         edit_button = findViewById(R.id.btn_editProfile_profile);
         txt_edit = findViewById(R.id.txt_editPhoto_profile);
+        main_page = findViewById(R.id.main_page_profile);
     }
 
 }
