@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import java.util.Objects;
 
+import io.realm.Realm;
+
 public class MainActivity extends AppCompatActivity {
     private Button register,login,main_page, to_profile;
     public static final String PROFILE_KEY_MAIN = "profile";
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Realm.init(this);
         initViews();
         Objects.requireNonNull(getSupportActionBar()).setTitle("Main Activity");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

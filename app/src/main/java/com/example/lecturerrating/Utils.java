@@ -7,8 +7,20 @@ import android.graphics.drawable.ShapeDrawable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.bson.BsonDocument;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.conversions.Bson;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Objects;
+
+import io.realm.Realm;
+import io.realm.mongodb.App;
+import io.realm.mongodb.AppConfiguration;
+import io.realm.mongodb.Credentials;
+import io.realm.mongodb.mongo.MongoClient;
+
 
 public class Utils {
 
@@ -16,6 +28,7 @@ public class Utils {
 
     private static Utils utils;
     private SharedPreferences sharedPreferences;
+    private final String AppID = "lecturerrating-vdujo";
 
     private Utils(Context context){
         sharedPreferences = context.getSharedPreferences("alternate_db", Context.MODE_PRIVATE);

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:title="navigate"
+        android:id="@+id/navigation_menu"
+        android:icon="@drawable/ic_navigation_menu"
+        app:showAsAction="always"
+        />
 
-<item android:contentDescription="content_description_one"
-    android:title="all teachers" />
-<item android:contentDescription="content_description_two"
-    android:title="@string/myRates" />
-    </menu>
+
+</menu>
